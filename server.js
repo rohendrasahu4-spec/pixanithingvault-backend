@@ -1,10 +1,6 @@
-// ============================================================
-// SERVER.JS – COMPLETE BACKEND (CORS IN ONE PLACE)
-// ============================================================
-
 require('dotenv').config();
 const express = require('express');
-const cors = require('cors');           // 🔴 CORS Import – यहाँ
+const cors = require('cors');
 const connectDB = require('./config/db');
 
 // Import Routes
@@ -18,24 +14,13 @@ connectDB();
 
 const app = express();
 
-// ============================================================
-// 🔴🔴🔴 CORS MIDDLEWARE – यहाँ एक साथ 🔴🔴🔴
-// ============================================================
-app.use(cors({
-    origin: '*',           // Development के लिए – सभी Origins Allow
-    // या सिर्फ अपने Frontend को Allow करें:
-    // origin: 'https://pixanithingvault-frontend.vercel.app'
-    credentials: true,
-}));
+// Middleware
+app.use(cors());
+app.use(express.json());
 
-// ============================================================
-// OTHER MIDDLEWARE
-// ============================================================
-app.use(express.json());   // JSON Body Parse करने के लिए
-
-// ============================================================
+// ============================================
 // ROUTES
-// ============================================================
+// ============================================
 
 // Health Check
 app.get('/api/health', (req, res) => {
@@ -46,28 +31,21 @@ app.get('/api/health', (req, res) => {
     });
 });
 
-// Authentication Routes (Register, Login, Google)
+// Authentication
 app.use('/api/auth', authRoutes);
 
-// Products Routes
+// Products
 app.use('/api/products', productRoutes);
 
-// Cart Routes (Protected)
+// Cart (protected)
 app.use('/api/cart', cartRoutes);
 
-// Orders Routes (Protected)
+// Orders (protected)
 app.use('/api/orders', orderRoutes);
 
-// ============================================================
-// 404 Handler (Optional – अगर कोई Route न मिले)
-// ============================================================
-app.use((req, res) => {
-    res.status(404).json({ error: 'Route not found' });
-});
-
-// ============================================================
+// ============================================
 // START SERVER
-// ============================================================
+// ============================================
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
